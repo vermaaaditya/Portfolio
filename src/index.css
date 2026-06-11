@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #0a0a0a;
+  --color-brand-surface: #111111;
+  --color-brand-border: #2a2a2a;
+  --color-brand-border-muted: #333333;
+  --color-brand-accent: #d4c97a;
+
+  --font-heading: "Space Mono", monospace;
+  --font-sans: "JetBrains Mono", monospace;
+}
+
+.text-stroke-accent {
+  -webkit-text-stroke: 1px rgba(212, 201, 122, 0.2);
+  color: transparent;
+}
+
+@media (min-width: 768px) {
+  .text-stroke-accent {
+    -webkit-text-stroke: 2px rgba(212, 201, 122, 0.2);
+  }
+}
+
+.project-glass {
+  background: rgba(17, 17, 17, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-brand-bg);
+    scroll-behavior: smooth;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border: 2px solid #0a0a0a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4c97a;
+}
+
+/* Cursor typing effect blinking animation */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Sci-fi HUD Grid Pattern */
+.hud-grid {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(42, 42, 42, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(42, 42, 42, 0.15) 1px, transparent 1px);
+}
+
+/* Glow accent effects */
+.glow-accent-blue {
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
+}
+
+.glow-accent-yellow {
+  box-shadow: 0 0 25px rgba(212, 201, 122, 0.25);
+}
+
+/* Tech Scanline Animation */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.animate-scanline {
+  animation: scanline 12s linear infinite;
+}
+
+/* Matrix-like terminal scroll styling */
+.terminal-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.terminal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.terminal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 201, 122, 0.3);
+  border-radius: 2px;
+}
+.terminal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 201, 122, 0.6);
+}
+
