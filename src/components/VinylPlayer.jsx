@@ -1,11 +1,56 @@
 import { useMemo, useState } from 'react';
 
 const tracks = [
-  { id: 0, title: 'Let It Happen', artist: 'Tame Impala', disc: 'TI', discBg: '#c9b96a', discFg: '#0a0a0a', spotifyId: '2X485T9Z5Ly0xyaghN73ed' },
-  { id: 1, title: 'Chicago', artist: 'Michael Jackson', disc: 'MJ', discBg: '#1a1a2e', discFg: '#7ec8e3', spotifyId: '6pknqMFPAqKXBWBRvQpyLQ' },
-  { id: 2, title: 'Kangna', artist: 'Jazzy B', disc: 'JB', discBg: '#2e1a1a', discFg: '#e37e7e', spotifyId: '3NMp3HKMHgMwMiHBqPeXP8' },
-  { id: 3, title: "God's Plan", artist: 'Drake', disc: 'DR', discBg: '#1a2e1a', discFg: '#7ee37e', spotifyId: '6DCZcSspjsKoFjzjrWbOan' },
-  { id: 4, title: 'Coming Soon', artist: '— TBD —', disc: '?', discBg: '#2a1a2e', discFg: '#c87ee3', spotifyId: null },
+  {
+    id: 0,
+    title: 'Let It Happen',
+    artist: 'Tame Impala',
+    disc: 'TI',
+    discBg: '#c9b96a',
+    discFg: '#0a0a0a',
+    spotifyId: '2X485T9Z5Ly0xyaghN73ed',
+    cover: '/assets/let it happen.webp',
+  },
+  {
+    id: 1,
+    title: 'Chicago',
+    artist: 'Michael Jackson',
+    disc: 'MJ',
+    discBg: '#1a1a2e',
+    discFg: '#7ec8e3',
+    spotifyId: '6pknqMFPAqKXBWBRvQpyLQ',
+    cover: '/assets/chicago.webp',
+  },
+  {
+    id: 2,
+    title: 'Kangna',
+    artist: 'Jazzy B',
+    disc: 'JB',
+    discBg: '#2e1a1a',
+    discFg: '#e37e7e',
+    spotifyId: '3NMp3HKMHgMwMiHBqPeXP8',
+    cover: '/assets/Kangna.webp',
+  },
+  {
+    id: 3,
+    title: "God's Plan",
+    artist: 'Drake',
+    disc: 'DR',
+    discBg: '#1a2e1a',
+    discFg: '#7ee37e',
+    spotifyId: '6DCZcSspjsKoFjzjrWbOan',
+    cover: '/assets/gods plan.webp',
+  },
+  {
+    id: 4,
+    title: 'Coming Soon',
+    artist: '— TBD —',
+    disc: '?',
+    discBg: '#2a1a2e',
+    discFg: '#c87ee3',
+    spotifyId: null,
+    cover: null,
+  },
 ];
 
 export default function VinylPlayer() {
@@ -16,21 +61,10 @@ export default function VinylPlayer() {
 
   const spotifySrc = useMemo(() => {
     if (!isPlaying || !activeTrack?.spotifyId) return '';
-    return `https://open.spotify.com/embed/track/${activeTrack.spotifyId}?utm_source=generator`;
+    return `https://open.spotify.com/embed/track/${activeTrack.spotifyId}?utm_source=oembed`;
   }, [activeTrack, isPlaying]);
 
-  const stopAndReset = () => {
-    setIsPlaying(false);
-    setActiveTrack(null);
-    setIsDrawerOpen(false);
-    setIsDragOver(false);
-  };
-
-  const handleTurntableClick = () => {
-    if (isPlaying) {
-      stopAndReset();
-      return;
-    }
+  const toggleDrawer = () => {
     setIsDrawerOpen((prev) => !prev);
   };
 
@@ -54,7 +88,7 @@ export default function VinylPlayer() {
     if (!pickedTrack) return;
 
     setActiveTrack(pickedTrack);
-    setIsPlaying(true);
+    setIsPlaying(Boolean(pickedTrack.spotifyId));
     setIsDrawerOpen(false);
   };
 
@@ -67,69 +101,138 @@ export default function VinylPlayer() {
         }
       `}</style>
 
-      <div className="absolute inset-0 z-40 pointer-events-none font-['Space_Mono',monospace]">
+      {isDrawerOpen && (
         <div
-          className="absolute top-0"
+          role="button"
+          tabIndex={0}
+          aria-label="Close record drawer overlay"
+          onClick={() => setIsDrawerOpen(false)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setIsDrawerOpen(false);
+            }
+          }}
+          className="fixed inset-0"
+          style={{ background: 'rgba(0, 0, 0, 0.6)', zIndex: 98 }}
+        />
+      )}
+
+      <button
+        type="button"
+        aria-label="Toggle record drawer"
+        onClick={toggleDrawer}
+        className="fixed left-0 top-1/2 flex items-center justify-center"
+        style={{
+          width: '28px',
+          height: '120px',
+          transform: 'translateY(-50%)',
+          background: '#111',
+          borderTop: '1.5px solid #c9b96a',
+          borderRight: '1.5px solid #c9b96a',
+          borderBottom: '1.5px solid #c9b96a',
+          borderLeft: 'none',
+          borderRadius: '0 4px 4px 0',
+          zIndex: 100,
+        }}
+      >
+        <span
           style={{
-            right: 'calc(100% + 16px)',
-            width: '115px',
-            height: '220px',
-            background: '#0f0f0f',
-            border: '1.5px solid #333',
-            transform: isDrawerOpen ? 'translateX(0)' : 'translateX(20px)',
-            opacity: isDrawerOpen ? 1 : 0,
-            pointerEvents: isDrawerOpen ? 'all' : 'none',
-            transition: 'transform 200ms ease, opacity 200ms ease',
+            color: '#c9b96a',
+            fontSize: '9px',
+            letterSpacing: '0.15em',
+            fontFamily: "'Space Mono', monospace",
+            transform: 'rotate(90deg)',
+            whiteSpace: 'nowrap',
           }}
         >
-          <div
-            className="px-2.5 pt-2 pb-1"
-            style={{
-              color: '#444',
-              fontSize: '8px',
-              letterSpacing: '0.15em',
-              fontWeight: 700,
-            }}
-          >
-            // CRATE
+          // CRATE
+        </span>
+      </button>
+
+      <div
+        className="fixed top-0 left-0 flex h-screen"
+        style={{
+          width: '40vw',
+          height: '100vh',
+          background: '#0d0d0d',
+          borderRight: '2px solid #c9b96a',
+          transform: isDrawerOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          zIndex: 99,
+        }}
+      >
+        <div className="flex h-full w-full flex-col font-['Space_Mono',monospace]">
+          <div className="px-8 pt-8 pb-4">
+            <div
+              style={{
+                color: '#444',
+                fontSize: '10px',
+                letterSpacing: '0.2em',
+              }}
+            >
+              // RECORD CRATE
+            </div>
+            <div className="mt-2 min-h-[16px] text-[12px] text-[#c9b96a]">{isPlaying && activeTrack ? activeTrack.title : ''}</div>
           </div>
 
-          <div className="px-2 pb-2 flex flex-col gap-1 overflow-y-auto h-[calc(100%-20px)]">
+          <div className="terminal-scrollbar flex-1 overflow-y-auto">
             {tracks.map((track) => (
               <div
                 key={track.id}
                 draggable={true}
                 onDragStart={(event) => handleDragStart(event, track.id)}
                 onDragEnd={handleDragEnd}
-                className="vinyl-record-item flex items-center gap-2 px-1.5 py-1 cursor-grab active:cursor-grabbing transition-all duration-150"
+                className="vinyl-record-item flex w-full cursor-grab items-center px-6 py-4 active:cursor-grabbing"
                 style={{
-                  width: '100%',
-                  border: '1.5px solid #2a2a2a',
-                  background: '#111',
+                  borderBottom: '1px solid #1a1a1a',
                 }}
               >
-                <div
-                  className="shrink-0 flex items-center justify-center text-[8px] font-bold"
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                    background: track.discBg,
-                    color: track.discFg,
-                  }}
-                >
-                  {track.disc}
+                {track.cover ? (
+                  <img
+                    src={track.cover}
+                    alt={`${track.title} cover`}
+                    className="h-12 w-12 shrink-0 object-cover"
+                    style={{ border: '1.5px solid #2a2a2a' }}
+                  />
+                ) : (
+                  <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center text-[12px] font-bold"
+                    style={{
+                      background: track.discBg,
+                      color: track.discFg,
+                      border: '1.5px solid #2a2a2a',
+                    }}
+                  >
+                    {track.disc}
+                  </div>
+                )}
+
+                <div className="ml-4 min-w-0 flex-1">
+                  <div className="truncate text-[13px] font-bold leading-tight text-[#ddd]">{track.title}</div>
+                  <div className="truncate text-[11px] leading-tight text-[#666]">{track.artist}</div>
                 </div>
 
-                <div className="min-w-0">
-                  <div className="text-[8px] font-bold text-[#ddd] truncate leading-tight">{track.title}</div>
-                  <div className="text-[7px] text-[#555] truncate leading-tight">{track.artist}</div>
-                </div>
+                <div className="ml-2 text-[18px] text-[#333]">⠿</div>
               </div>
             ))}
           </div>
-        </div>
 
+          <div className="px-8 py-6">
+            <div
+              style={{
+                color: '#333',
+                fontSize: '10px',
+                letterSpacing: '0.12em',
+              }}
+            >
+              drag a record onto the turntable
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute inset-0 z-40 pointer-events-none font-['Space_Mono',monospace]">
         <div className="absolute -bottom-[14px] -right-[14px] pointer-events-auto">
           <div
             id="path-about"
@@ -158,18 +261,32 @@ export default function VinylPlayer() {
             </div>
 
             <div
-              className="absolute left-1/2 top-1/2 flex items-center justify-center text-[6px] font-bold"
+              className="absolute left-1/2 top-1/2 flex items-center justify-center overflow-hidden"
               style={{
-                width: '13px',
-                height: '13px',
+                width: '22px',
+                height: '22px',
                 borderRadius: '50%',
                 transform: 'translate(-50%, -50%)',
-                background: isPlaying && activeTrack ? activeTrack.discBg : '#111',
-                color: isPlaying && activeTrack ? activeTrack.discFg : '#c9b96a',
+                background: '#111',
                 border: '1px solid #2a2a2a',
               }}
             >
-              {isPlaying && activeTrack ? activeTrack.disc : 'AV'}
+              {activeTrack?.cover ? (
+                <img
+                  src={activeTrack.cover}
+                  alt={`${activeTrack.title} cover art`}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    opacity: activeTrack?.cover ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                  }}
+                />
+              ) : (
+                <span className="text-[6px] font-bold text-[#c9b96a]">AV</span>
+              )}
             </div>
 
             <div
@@ -203,7 +320,7 @@ export default function VinylPlayer() {
               role="button"
               tabIndex={0}
               aria-label="Vinyl turntable"
-              onClick={handleTurntableClick}
+              onClick={toggleDrawer}
               onDragOver={(event) => {
                 event.preventDefault();
                 setIsDragOver(true);
@@ -213,7 +330,7 @@ export default function VinylPlayer() {
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  handleTurntableClick();
+                  toggleDrawer();
                 }
               }}
               className="absolute inset-0 z-10"
@@ -225,20 +342,24 @@ export default function VinylPlayer() {
           </div>
         </div>
 
-        <iframe
-          title="Spotify Vinyl Player"
-          src={spotifySrc}
-          style={{
-            width: 0,
-            height: 0,
-            border: 0,
-            opacity: 0,
-            position: 'absolute',
-            pointerEvents: 'none',
-          }}
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        />
+        {spotifySrc && (
+          <iframe
+            title="Spotify Vinyl Player"
+            src={spotifySrc}
+            style={{
+              width: 1,
+              height: 1,
+              border: 0,
+              opacity: 0,
+              position: 'fixed',
+              left: 0,
+              bottom: 0,
+              pointerEvents: 'none',
+            }}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          />
+        )}
       </div>
 
       <style>{`
@@ -247,8 +368,8 @@ export default function VinylPlayer() {
         }
 
         .vinyl-record-item:hover {
-          border-color: #c9b96a !important;
-          transform: translateX(3px);
+          background: #161616;
+          border-left: 3px solid #c9b96a;
         }
       `}</style>
     </>
