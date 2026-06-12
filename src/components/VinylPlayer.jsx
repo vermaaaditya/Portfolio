@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import coverLetItHappen from '../assets/covers/let it happen.webp';
@@ -39,6 +39,11 @@ export default function VinylPlayer() {
   const [activeTrack, setActiveTrack] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const [popupMessage, setPopupMessage] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
