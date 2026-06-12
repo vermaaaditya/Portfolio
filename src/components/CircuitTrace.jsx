@@ -34,7 +34,7 @@ export default function CircuitTrace() {
 
       if (coords.length < 2) return;
 
-      // Construct a smooth free-flowing S-curve path
+      // Construct a perfectly smooth vertical ease-in-out curve
       let d = `M ${coords[0].x} ${coords[0].y}`;
       const newBranches = [];
 
@@ -42,18 +42,18 @@ export default function CircuitTrace() {
         const p1 = coords[i];
         const p2 = coords[i + 1];
 
-        // Smooth S-curve control points (midpoint vertical bend)
+        // This creates a smooth flowing S-curve that adapts to any vertical distance
         const midY = (p1.y + p2.y) / 2;
-        const offsetX = i % 2 === 0 ? 150 : -150;
-        d += ` C ${p1.x + offsetX} ${midY}, ${p2.x - offsetX} ${midY}, ${p2.x} ${p2.y}`;
+        d += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
 
         // Add matching curved branches offshooting from the main line
         if (i < coords.length - 2) {
           const branchDir = i % 2 === 0 ? -1 : 1;
-          const branchX = p2.x + branchDir * 70;
-          const branchY = midY + 60;
+          const branchX = p2.x + branchDir * 90; 
+          const branchY = midY + 40;
+          
           newBranches.push({
-            path: `M ${p2.x} ${midY} C ${p2.x} ${midY + 30}, ${branchX} ${midY}, ${branchX} ${branchY}`,
+            path: `M ${p2.x} ${midY} C ${p2.x + branchDir * 20} ${midY}, ${branchX} ${branchY - 20}, ${branchX} ${branchY}`,
             circle: { x: branchX, y: branchY }
           });
         }
@@ -121,12 +121,13 @@ export default function CircuitTrace() {
   }, [pathData]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
+    {/* CRITICAL UPDATE: Changed z-0 to -z-10 to push it behind content */}
+    <div ref={containerRef} className="absolute inset-0 -z-10 pointer-events-none w-full h-full overflow-hidden">
       <svg className="absolute top-0 left-0 w-full h-full">
-        {/* Glow Filters */}
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
+            {/* Increased blur deviation from 6 to 12 for a wider glow */}
+            <feGaussianBlur stdDeviation="12" result="blur" />
             <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 2 0" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -135,7 +136,7 @@ export default function CircuitTrace() {
           </filter>
         </defs>
 
-        {/* 1. Glowing Background Trace Path (Thicker, blur matrix applied) */}
+        {/* Glowing Background Trace Path */}
         {pathData && (
           <path
             d={pathData}
@@ -143,14 +144,14 @@ export default function CircuitTrace() {
             fill="none"
             stroke="#d4c97a"
             strokeWidth="5"
-            strokeOpacity="0.4"
+            strokeOpacity="0.7" {/* Boosted opacity for stronger glow */}
             filter="url(#glow)"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         )}
 
-        {/* 2. Sharp High-Brightness Core Trace Path */}
+        {/* Sharp High-Brightness Core Trace Path */}
         {pathData && (
           <path
             d={pathData}
@@ -167,26 +168,23 @@ export default function CircuitTrace() {
         {/* Decorative Offshoot Branches */}
         {branches.map((b, idx) => (
           <g key={idx}>
-            {/* Glow underlayer for branch */}
             <path
               d={b.path}
               fill="none"
               stroke="#d4c97a"
               strokeWidth="3"
-              strokeOpacity="0.18"
+              strokeOpacity="0.3"
               filter="url(#glow)"
               strokeLinecap="round"
             />
-            {/* Core branch line */}
             <path
               d={b.path}
               fill="none"
               stroke="#d4c97a"
               strokeWidth="0.75"
-              strokeOpacity="0.5"
+              strokeOpacity="0.6"
               strokeLinecap="round"
             />
-            {/* Terminal nodes */}
             <circle
               cx={b.circle.x}
               cy={b.circle.y}
@@ -194,8 +192,8 @@ export default function CircuitTrace() {
               fill="#0a0a0a"
               stroke="#d4c97a"
               strokeWidth="2"
-              strokeOpacity="0.8"
-              className="filter drop-shadow-[0_0_4px_rgba(212,201,122,0.6)]"
+              strokeOpacity="1"
+              className="filter drop-shadow-[0_0_8px_rgba(212,201,122,0.8)]"
             />
           </g>
         ))}
