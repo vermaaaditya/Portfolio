@@ -141,7 +141,6 @@ export default function VinylPlayer() {
               #0a0a0a 46%, #0a0a0a 100%
             )`,
             border: '1px solid #333',
-            // Note: translate(-50%, -50%) is combined with rotation in animation
             transform: 'translate(-50%, -50%)',
             animation: isPlaying ? 'spin 2s linear infinite' : 'none'
           }}
@@ -182,9 +181,7 @@ export default function VinylPlayer() {
           onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
           onDragLeave={() => setIsDragOver(false)}
           onDrop={handleDrop}
-          onClick={(e) => { e.stopPropagation(); }} // let clicks pass to housing? the prompt says "Click turntable housing (not on drop zone)"
-          // Wait, if we stopPropagation, clicking drop zone does nothing. If we don't, it triggers housing click.
-          // "Click turntable housing (not on drop zone): toggle drawer open/closed". This implies drop zone should intercept.
+          onClick={(e) => { e.stopPropagation(); }}
           style={{
             position: 'absolute',
             top: '50%',
@@ -296,18 +293,20 @@ export default function VinylPlayer() {
             position: 'fixed',
             bottom: 0,
             left: 0,
-            right: 0,
+            width: '100vw', 
             height: '220px',
             background: '#0d0d0d',
             borderTop: '2px solid #c9b96a',
+            borderRight: '2px solid #c9b96a',
             zIndex: 99,
-            transform: isDrawerOpen ? 'translateY(0)' : 'translateY(100%)',
+            transform: isDrawerOpen ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             display: 'flex',
             alignItems: 'center',
             padding: '1rem 2rem',
             gap: '2.5rem',
-            fontFamily: "'Space Mono', monospace"
+            fontFamily: "'Space Mono', monospace",
+            boxSizing: 'border-box'
           }}
         >
           {/* Left Section */}
