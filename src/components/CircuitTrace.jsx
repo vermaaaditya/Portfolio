@@ -112,7 +112,8 @@ export default function CircuitTrace() {
   }, [pathData]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 -z-10 pointer-events-none w-full h-full overflow-hidden">
+    
+      <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
       <svg className="absolute top-0 left-0 w-full h-full">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
