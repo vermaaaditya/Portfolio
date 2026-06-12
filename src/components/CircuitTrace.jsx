@@ -56,8 +56,8 @@ export default function CircuitTrace() {
             you can change it into a smooth "C" curve that bows out cleanly to one side 
             and hooks back to the center by making both offsets the same sign:
             */
-            startOffset = dynamicOffset; 
-            endOffset = dynamicOffset;
+            startOffset = -dynamicOffset; 
+            endOffset = -dynamicOffset;
           
         }
 
