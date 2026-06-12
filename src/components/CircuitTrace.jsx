@@ -44,7 +44,8 @@ export default function CircuitTrace() {
 
         // Smooth S-curve control points (midpoint vertical bend)
         const midY = (p1.y + p2.y) / 2;
-        d += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+        const offsetX = i % 2 === 0 ? 150 : -150;
+        d += ` C ${p1.x + offsetX} ${midY}, ${p2.x - offsetX} ${midY}, ${p2.x} ${p2.y}`;
 
         // Add matching curved branches offshooting from the main line
         if (i < coords.length - 2) {
