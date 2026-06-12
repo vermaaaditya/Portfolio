@@ -26,11 +26,9 @@ export default function Hero() {
       if (index >= fullText.length) {
         clearInterval(interval);
       }
-    }, 45); // typing speed
+    }, 45);
     return () => clearInterval(interval);
   }, []);
-
-
 
   // Loader progress ticker simulation
   useEffect(() => {
@@ -64,7 +62,7 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  // Diagnostics simulator (Epochs and Loss fluctuation)
+  // Diagnostics simulator
   useEffect(() => {
     const interval = setInterval(() => {
       setLoss(l => +(l + (Math.random() - 0.5) * 0.0001).toFixed(6));
@@ -84,7 +82,6 @@ export default function Hero() {
       "[sys] training status: running feedforward."
     ];
 
-    // Load boot logs one by one
     bootLogs.forEach((log, idx) => {
       setTimeout(() => {
         setLogs(prev => [...prev, log]);
@@ -130,7 +127,6 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Spline onLoad handler
   const handleLoad = (splineApp) => {
     splineAppRef.current = splineApp;
     setIsLoading(false);
@@ -155,7 +151,7 @@ export default function Hero() {
       <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#d4c97a]/30 to-transparent pointer-events-none z-10 animate-scanline" />
 
       {/* 1. TOP HEADER STATUS BAR */}
-      <div className="w-full border-b border-brand-border/40 py-2.5 px-6 flex justify-between items-center text-[9px] font-mono text-stone-500 uppercase tracking-widest relative z-20 pointer-events-none">
+      <div className="w-full border-b border-brand-border/40 py-2.5 px-6 flex justify-between items-center text-[9px] font-mono text-stone-500 uppercase tracking-widest relative z-30 pointer-events-none bg-[#0a0a0a]/80 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
           <span>AV_PORTFOLIO // V4.6.9</span>
@@ -168,28 +164,34 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* 2. MAIN SPLIT CONTENT AREA */}
-      <div className="flex-1 flex flex-col lg:flex-row w-full relative">
+      {/* MAIN IMMERSIVE AREA */}
+      <div className="relative flex-1 w-full flex items-center justify-center">
 
-        {/* LEFT PANEL: Branding & Copy (40% width on Desktop) */}
-        <div className="w-full lg:w-[40%] flex flex-col justify-center px-8 md:px-12 py-16 lg:py-0 min-h-[50vh] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-brand-border/40 relative z-20 backdrop-blur-[6px] bg-[#0a0a0a]/50">
-
-          {/* Subtle noise pattern specific to left column */}
-          <div className="absolute inset-0 z-0 opacity-[0.035] pointer-events-none mix-blend-overlay">
-            <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-              <filter id="leftNoise">
-                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
-              </filter>
-              <rect width="100%" height="100%" filter="url(#leftNoise)" />
-            </svg>
+        {/* 2. BACKGROUND: 3D SPLINE CANVAS (Full width, fully interactive) */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-auto">
+          {/* Radial thematic glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.08)_0%,rgba(168,85,247,0.04)_45%,transparent_80%)] pointer-events-none z-0" />
+          
+          <div className="w-full h-full max-w-[1200px] flex items-center justify-center relative z-10">
+            <Suspense fallback={null}>
+              <Spline
+                scene="https://prod.spline.design/Fm-tD6aRlFY63N5H/scene.splinecode"
+                className="w-full h-full relative z-10 scale-[1.1] md:scale-100"
+                onLoad={handleLoad}
+              />
+            </Suspense>
           </div>
+        </div>
 
-          <div className="relative z-10 max-w-lg">
-            {/* Corner Bracket decorations */}
+        {/* 3. FOREGROUND: BRANDING & COPY (Overlays the 3D model) */}
+        {/* pointer-events-none ensures you can drag the 3D brain right through the text */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-center pointer-events-none mt-12 md:mt-0">
+          
+          <div className="max-w-xl relative">
             <div className="absolute -top-6 -left-4 text-stone-700 font-mono text-xs select-none">┌ [SYS_INIT]</div>
 
-            {/* Header Typography */}
-            <div className="mb-6">
+            {/* Header Typography with slight drop shadow for legibility over the glowing brain */}
+            <div className="mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
               <motion.h1
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -209,25 +211,25 @@ export default function Hero() {
             </div>
 
             {/* Dynamic typing bio */}
-            <div className="mb-10 min-h-[60px] border-l-2 border-brand-border/60 pl-4">
-              <h2 className="text-xs md:text-sm font-sans font-medium tracking-tight text-stone-400 leading-relaxed">
+            <div className="mb-10 min-h-[60px] border-l-2 border-[#d4c97a]/60 pl-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-xs md:text-sm font-sans font-medium tracking-tight text-stone-300 leading-relaxed max-w-md">
                 {typedText}
                 <span className="inline-block w-[2px] h-4 bg-[#d4c97a] ml-1 align-middle cursor-blink" />
               </h2>
             </div>
 
-            {/* Brutalist CTAs */}
-            <div className="flex flex-wrap gap-4">
+            {/* Brutalist CTAs (pointer-events-auto so they can still be clicked!) */}
+            <div className="flex flex-wrap gap-4 pointer-events-auto">
               <button
                 onClick={handleScrollDown}
-                className="bg-transparent text-[#d4c97a] border border-[#d4c97a] px-6 py-3.5 font-mono text-xs uppercase tracking-widest hover:bg-[#d4c97a] hover:text-[#0a0a0a] transition-all cursor-pointer relative overflow-hidden group"
+                className="bg-[#0a0a0a]/50 backdrop-blur-sm text-[#d4c97a] border border-[#d4c97a] px-6 py-3.5 font-mono text-xs uppercase tracking-widest hover:bg-[#d4c97a] hover:text-[#0a0a0a] transition-all cursor-pointer relative overflow-hidden group"
               >
                 <span className="relative z-10">View Projects &darr;</span>
                 <span className="absolute inset-0 bg-[#d4c97a]/10 translate-y-full group-hover:translate-y-0 transition-transform duration-200" />
               </button>
               <a
                 href="mailto:aadityaverma2824@gmail.com"
-                className="bg-[#d4c97a] text-[#0a0a0a] border border-[#d4c97a] px-6 py-3.5 font-mono text-xs uppercase tracking-widest hover:bg-transparent hover:text-[#d4c97a] transition-all text-center relative overflow-hidden group"
+                className="bg-[#d4c97a] text-[#0a0a0a] border border-[#d4c97a] px-6 py-3.5 font-mono text-xs uppercase tracking-widest hover:bg-transparent hover:text-[#d4c97a] hover:bg-[#0a0a0a]/50 hover:backdrop-blur-sm transition-all text-center relative overflow-hidden group"
               >
                 <span className="relative z-10">Contact Me &rarr;</span>
                 <span className="absolute inset-0 bg-transparent group-hover:bg-[#d4c97a]/10 translate-y-full group-hover:translate-y-0 transition-transform duration-200" />
@@ -238,71 +240,55 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT PANEL: 3D Canvas HUD (60% width on Desktop) */}
-        <div className="w-full lg:w-[60%] h-[55vh] lg:h-auto relative flex items-center justify-center overflow-hidden z-10">
-
-          {/* Radial thematic glow centered on 3D object */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.14)_0%,rgba(168,85,247,0.06)_55%,transparent_90%)] pointer-events-none z-0" />
-
-          {/* 3D Model Centered Container with aspect lock */}
-          <div className="w-full h-full max-w-[1000px] max-h-[800px] aspect-square lg:aspect-[4/3] flex items-center justify-center relative z-10 pointer-events-auto">
-            <Suspense fallback={null}>
-              <Spline
-                scene="https://prod.spline.design/Fm-tD6aRlFY63N5H/scene.splinecode"
-                className="w-full h-full relative z-10 scale-95 md:scale-100"
-                onLoad={handleLoad}
-              />
-            </Suspense>
+        {/* 4. HUD WIDGETS */}
+        {/* TELEMETRY WIDGET */}
+        <div className="absolute top-4 right-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[170px] pointer-events-auto hidden lg:block">
+          <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1 mb-1.5 flex justify-between items-center text-[10px]">
+            <span>DIAGNOSTICS</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           </div>
-
-          {/* TELEMETRY WIDGET (Top Right) */}
-          <div className="absolute top-4 right-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[170px] pointer-events-auto">
-            <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1 mb-1.5 flex justify-between items-center text-[10px]">
-              <span>DIAGNOSTICS</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between"><span>MODEL:</span><span className="text-stone-200">BRAIN-MESH</span></div>
-              <div className="flex justify-between"><span>SHADERS:</span><span className="text-stone-200">GLSL-3D</span></div>
-              <div className="flex justify-between"><span>LOSS:</span><span className="text-rose-400 font-bold">{loss.toFixed(6)}</span></div>
-              <div className="flex justify-between"><span>EPOCH:</span><span className="text-stone-200 font-bold">{epoch}</span></div>
-              <div className="flex justify-between"><span>STATUS:</span><span className="text-emerald-400">OPTIMIZING</span></div>
-            </div>
-          </div>
-
-          {/* SIMULATED TRAINING LOGS TERMINAL (Bottom Left - Desktop only) */}
-          <div className="absolute bottom-4 left-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[240px] h-[95px] flex flex-col justify-between pointer-events-auto hidden md:flex">
-            <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1 mb-1 flex justify-between items-center text-[10px]">
-              <span>TRAINING FEED</span>
-              <span className="text-[7.5px] text-stone-500 uppercase">SYS_LOG</span>
-            </div>
-            <div ref={terminalRef} className="flex-1 overflow-y-auto terminal-scrollbar space-y-0.5 pr-1 text-stone-400">
-              {logs.map((log, idx) => (
-                <div key={idx} className="whitespace-nowrap overflow-hidden text-ellipsis leading-tight text-left">
-                  {log}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* INTERACTION STATUS WIDGET (Bottom Right) */}
-          <div className="absolute bottom-4 right-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[150px] flex flex-col gap-1.5 pointer-events-auto">
-            <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1.5 mb-0.5 flex justify-between items-center text-[10px]">
-              <span>INTERFACE</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between"><span>AUTO-SPIN:</span><span className="text-emerald-400 font-bold font-mono">ACTIVE</span></div>
-              <div className="flex justify-between"><span>DRAG-ORBIT:</span><span className="text-stone-200">ENABLED</span></div>
-              <div className="flex justify-between"><span>HOVER-DEFORM:</span><span className="text-stone-200">ENABLED</span></div>
-            </div>
+          <div className="space-y-1">
+            <div className="flex justify-between"><span>MODEL:</span><span className="text-stone-200">BRAIN-MESH</span></div>
+            <div className="flex justify-between"><span>SHADERS:</span><span className="text-stone-200">GLSL-3D</span></div>
+            <div className="flex justify-between"><span>LOSS:</span><span className="text-rose-400 font-bold">{loss.toFixed(6)}</span></div>
+            <div className="flex justify-between"><span>EPOCH:</span><span className="text-stone-200 font-bold">{epoch}</span></div>
+            <div className="flex justify-between"><span>STATUS:</span><span className="text-emerald-400">OPTIMIZING</span></div>
           </div>
         </div>
+
+        {/* SIMULATED TRAINING LOGS TERMINAL */}
+        <div className="absolute bottom-4 left-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[240px] h-[95px] flex flex-col justify-between pointer-events-auto hidden lg:flex">
+          <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1 mb-1 flex justify-between items-center text-[10px]">
+            <span>TRAINING FEED</span>
+            <span className="text-[7.5px] text-stone-500 uppercase">SYS_LOG</span>
+          </div>
+          <div ref={terminalRef} className="flex-1 overflow-y-auto terminal-scrollbar space-y-0.5 pr-1 text-stone-400">
+            {logs.map((log, idx) => (
+              <div key={idx} className="whitespace-nowrap overflow-hidden text-ellipsis leading-tight text-left">
+                {log}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* INTERACTION STATUS WIDGET */}
+        <div className="absolute bottom-4 right-4 z-20 project-glass p-3 font-mono text-[9px] text-stone-400 border border-brand-border/40 w-[150px] flex flex-col gap-1.5 pointer-events-auto hidden lg:flex">
+          <div className="text-[#d4c97a] font-bold border-b border-brand-border/40 pb-1.5 mb-0.5 flex justify-between items-center text-[10px]">
+            <span>INTERFACE</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex justify-between"><span>AUTO-SPIN:</span><span className="text-emerald-400 font-bold font-mono">ACTIVE</span></div>
+            <div className="flex justify-between"><span>DRAG-ORBIT:</span><span className="text-stone-200">ENABLED</span></div>
+            <div className="flex justify-between"><span>HOVER-DEFORM:</span><span className="text-stone-200">ENABLED</span></div>
+          </div>
+        </div>
+
       </div>
 
-      {/* 3. SCROLL DOWN TRACK INDICATOR (Bottom Center) */}
+      {/* 5. SCROLL DOWN TRACK INDICATOR */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none hidden lg:flex">
-        <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-stone-500 mb-1.5">
+        <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-stone-500 mb-1.5 drop-shadow-md">
           ACTIVATE_SCROLL
         </span>
         <div className="w-0.5 h-6 bg-[#d4c97a]/20 relative overflow-hidden">
@@ -314,38 +300,31 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* 4. S-CURVE CIRCUIT PATH START POINT NODE */}
+      {/* 6. S-CURVE CIRCUIT PATH START POINT NODE */}
       <div
         id="path-hero-start"
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#d4c97a] rotate-45 border border-[#0a0a0a] z-20"
       />
 
-      {/* 5. CUSTOM SCI-FI BOOT SCREEN LOADER */}
+      {/* 7. CUSTOM SCI-FI BOOT SCREEN LOADER */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="absolute inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono"
+            className="absolute inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono pointer-events-auto"
           >
-            {/* Loader Background Grid */}
             <div className="absolute inset-0 hud-grid opacity-20 pointer-events-none" />
-
             <div className="relative p-7 border border-brand-border project-glass max-w-sm w-full mx-4 flex flex-col items-center">
-              {/* Spinning Ring */}
               <div className="w-12 h-12 border border-stone-800 border-t-[#d4c97a] rounded-full animate-spin mb-6" />
-
               <h3 className="text-xs uppercase text-stone-400 tracking-[0.2em] mb-2 font-bold">NEURAL BOOT SEQUENCE</h3>
-
-              {/* Progress bar */}
               <div className="w-full h-1 bg-stone-900 border border-brand-border/40 rounded-full overflow-hidden mb-3">
                 <div
                   className="h-full bg-[#d4c97a] transition-all duration-150 ease-out"
                   style={{ width: `${bootProgress}%` }}
                 />
               </div>
-
               <div className="flex justify-between w-full text-[9px] text-stone-500 mb-1.5">
                 <span>STATUS_CODE:</span>
                 <span className="text-stone-300 font-bold">{bootProgress}%</span>
