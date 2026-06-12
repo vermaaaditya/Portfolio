@@ -41,10 +41,30 @@ export default function CircuitTrace() {
         const midY = (p1.y + p2.y) / 2;
         const distanceY = Math.abs(p2.y - p1.y);
         const dynamicOffset = Math.min(distanceY * 0.4, 250); 
-        const offsetX = i % 2 === 0 ? dynamicOffset : -dynamicOffset;
+        
+        // Split the offset controls so we can manipulate them independently
+        let startOffset = i % 2 === 0 ? dynamicOffset : -dynamicOffset;
+        let endOffset = i % 2 === 0 ? -dynamicOffset : dynamicOffset;
 
-        d += ` C ${p1.x + offsetX} ${midY}, ${p2.x - offsetX} ${midY}, ${p2.x} ${p2.y}`;
+        // 🎯 THE FIX: Intercept the very last segment (Projects -> CTA)
+        if (i === coords.length - 2) {
+          // This flips the polarity of the final S-curve so it diverts the other way
+          startOffset = -startOffset;
+          endOffset = -endOffset;
+          
+          /* PRO-TIP: If an S-curve still feels awkward at the very end of the page, 
+            you can change it into a smooth "C" curve that bows out cleanly to one side 
+            and hooks back to the center by making both offsets the same sign:
+            
+            startOffset = dynamicOffset; 
+            endOffset = dynamicOffset;
+          */
+        }
 
+        // Apply the modified offsets to the Bezier curve
+        d += ` C ${p1.x + startOffset} ${midY}, ${p2.x + endOffset} ${midY}, ${p2.x} ${p2.y}`;
+
+        // Add matching curved branches offshooting from the main line
         if (i < coords.length - 2) {
           const branchDir = i % 2 === 0 ? -1 : 1;
           const branchX = p2.x + branchDir * 120; 
@@ -56,7 +76,6 @@ export default function CircuitTrace() {
           });
         }
       }
-
       setPathData(d);
       setBranches(newBranches);
     };
