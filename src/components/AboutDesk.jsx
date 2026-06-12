@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import VinylPlayer from './VinylPlayer';
 
 export default function AboutDesk() {
   const roles = [
@@ -33,44 +34,7 @@ export default function AboutDesk() {
             <div className="absolute inset-0 border-2 border-[#111] pointer-events-none" />
           </motion.div>
 
-          {/* Wax Seal Stamp in the Corner */}
-          <div className="absolute -bottom-5 -right-5 w-24 h-24 z-30">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-              className="relative w-full h-full flex items-center justify-center"
-            >
-              {/* Circular Dash Stamp Line */}
-              <svg className="absolute w-full h-full text-[#d4c97a] opacity-35" viewBox="0 0 100 100">
-                <path
-                  id="circlePath"
-                  d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeDasharray="4 4"
-                />
-                <text className="font-mono text-[8.5px] fill-current uppercase tracking-wider">
-                  <textPath href="#circlePath">
-                    * AUTONEX * GOOGLE AMBASSADOR * SIET TPC *
-                  </textPath>
-                </text>
-              </svg>
-
-              {/* Solid Wax Core - Circuit Trace Anchor */}
-              <div 
-                id="path-about"
-                className="w-12 h-12 rounded-full bg-[#1c1c16] border-2 border-[#d4c97a] shadow-inner flex items-center justify-center relative cursor-pointer group"
-              >
-                {/* Stamp Icon */}
-                <span className="font-heading text-xs font-bold text-[#d4c97a] tracking-tight group-hover:scale-110 transition-transform">
-                  AV
-                </span>
-                {/* Tiny blinking center dot */}
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#d4c97a] animate-ping opacity-30" />
-              </div>
-            </motion.div>
-          </div>
+          <VinylPlayer />
         </div>
 
         {/* Text Contents */}
