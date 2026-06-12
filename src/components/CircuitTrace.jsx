@@ -19,7 +19,6 @@ export default function CircuitTrace() {
         'path-cta'
       ];
 
-      // Get coords relative to scroll height
       const coords = anchors.map(id => {
         const el = document.getElementById(id);
         if (!el) return null;
@@ -34,7 +33,6 @@ export default function CircuitTrace() {
 
       if (coords.length < 2) return;
 
-      // Construct a perfectly smooth vertical ease-in-out curve
       let d = `M ${coords[0].x} ${coords[0].y}`;
       const newBranches = [];
 
@@ -42,11 +40,9 @@ export default function CircuitTrace() {
         const p1 = coords[i];
         const p2 = coords[i + 1];
 
-        // This creates a smooth flowing S-curve that adapts to any vertical distance
         const midY = (p1.y + p2.y) / 2;
         d += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
 
-        // Add matching curved branches offshooting from the main line
         if (i < coords.length - 2) {
           const branchDir = i % 2 === 0 ? -1 : 1;
           const branchX = p2.x + branchDir * 90; 
@@ -63,13 +59,11 @@ export default function CircuitTrace() {
       setBranches(newBranches);
     };
 
-    // Delay slightly to let layout adjust
     const timer = setTimeout(calculatePath, 650);
 
     window.addEventListener('resize', calculatePath);
     window.addEventListener('load', calculatePath);
 
-    // Watch for dynamic height changes
     const observer = new MutationObserver(calculatePath);
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -84,20 +78,17 @@ export default function CircuitTrace() {
   useEffect(() => {
     if (!pathData || !containerRef.current) return;
 
-    // Target all paths with the .circuit-path class (both core and glow layers)
     const paths = containerRef.current.querySelectorAll('.circuit-path');
     const triggers = [];
 
     paths.forEach(path => {
       const length = path.getTotalLength();
 
-      // Reset dash offset properties
       gsap.set(path, {
         strokeDasharray: length,
         strokeDashoffset: length
       });
 
-      // Animate draw progression based on viewport scroll progress
       const anim = gsap.to(path, {
         strokeDashoffset: 0,
         ease: 'none',
@@ -121,12 +112,10 @@ export default function CircuitTrace() {
   }, [pathData]);
 
   return (
-    {/* CRITICAL UPDATE: Changed z-0 to -z-10 to push it behind content */}
     <div ref={containerRef} className="absolute inset-0 -z-10 pointer-events-none w-full h-full overflow-hidden">
       <svg className="absolute top-0 left-0 w-full h-full">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            {/* Increased blur deviation from 6 to 12 for a wider glow */}
             <feGaussianBlur stdDeviation="12" result="blur" />
             <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 2 0" />
             <feMerge>
@@ -136,7 +125,6 @@ export default function CircuitTrace() {
           </filter>
         </defs>
 
-        {/* Glowing Background Trace Path */}
         {pathData && (
           <path
             d={pathData}
@@ -144,14 +132,13 @@ export default function CircuitTrace() {
             fill="none"
             stroke="#d4c97a"
             strokeWidth="5"
-            strokeOpacity="0.7" {/* Boosted opacity for stronger glow */}
+            strokeOpacity="0.7"
             filter="url(#glow)"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         )}
 
-        {/* Sharp High-Brightness Core Trace Path */}
         {pathData && (
           <path
             d={pathData}
@@ -165,7 +152,6 @@ export default function CircuitTrace() {
           />
         )}
 
-        {/* Decorative Offshoot Branches */}
         {branches.map((b, idx) => (
           <g key={idx}>
             <path
