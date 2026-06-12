@@ -6,26 +6,31 @@ import coverChicago     from '../assets/covers/chicago.webp';
 import coverKangna      from '../assets/covers/Kangna.webp';
 import coverGodsplan    from '../assets/covers/gods plan.webp';
 
+import audioLetItHappen from '../assets/music/Let It Happen.mp3';
+import audioChicago     from '../assets/music/Chicago.mp3';
+import audioKangna      from '../assets/music/Kangna.mp3';
+import audioGodsplan    from "../assets/music/God's Plan.mp3";
+
 const tracks = [
   { id:0, title:'Let It Happen', artist:'Tame Impala',
     disc:'TI', discBg:'#c9b96a', discFg:'#0a0a0a',
-    spotifyId:'2X485T9Z5Ly0xyaghN73ed', cover: coverLetItHappen },
+    audioSrc: audioLetItHappen, cover: coverLetItHappen },
 
   { id:1, title:'Chicago', artist:'Michael Jackson',
     disc:'MJ', discBg:'#1a1a2e', discFg:'#7ec8e3',
-    spotifyId:'6pknqMFPAqKXBWBRvQpyLQ', cover: coverChicago },
+    audioSrc: audioChicago, cover: coverChicago },
 
   { id:2, title:'Kangna', artist:'Jazzy B',
     disc:'JB', discBg:'#2e1a1a', discFg:'#e37e7e',
-    spotifyId:'3NMp3HKMHgMwMiHBqPeXP8', cover: coverKangna },
+    audioSrc: audioKangna, cover: coverKangna },
 
   { id:3, title:"God's Plan", artist:'Drake',
     disc:'DR', discBg:'#1a2e1a', discFg:'#7ee37e',
-    spotifyId:'6DCZcSspjsKoFjzjrWbOan', cover: coverGodsplan },
+    audioSrc: audioGodsplan, cover: coverGodsplan },
 
   { id:4, title:'Coming Soon', artist:'— TBD —',
     disc:'?',  discBg:'#2a1a2e', discFg:'#c87ee3',
-    spotifyId: null, cover: null },
+    audioSrc: null, cover: null },
 ];
 
 export default function VinylPlayer() {
@@ -38,11 +43,6 @@ export default function VinylPlayer() {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const spotifySrc = useMemo(() => {
-    if (!isPlaying || !activeTrack?.spotifyId) return undefined;
-    return `https://open.spotify.com/embed/track/${activeTrack.spotifyId}?utm_source=oembed&autoplay=1`;
-  }, [activeTrack, isPlaying]);
 
   const toggleDrawer = () => setIsDrawerOpen(p => !p);
 
@@ -80,7 +80,7 @@ export default function VinylPlayer() {
     if (!pickedTrack) return;
     
     setActiveTrack(pickedTrack);
-    setIsPlaying(Boolean(pickedTrack.spotifyId));
+    setIsPlaying(Boolean(pickedTrack.audioSrc));
     setIsDrawerOpen(false);
   };
 
@@ -408,23 +408,15 @@ export default function VinylPlayer() {
         document.body
       )}
 
-      {/* Audio Iframe */}
-      <iframe
-        title="Spotify Vinyl Player"
-        src={spotifySrc}
-        style={{
-          width: 1,
-          height: 1,
-          border: 0,
-          opacity: 0,
-          position: 'fixed',
-          left: 0,
-          bottom: 0,
-          pointerEvents: 'none'
-        }}
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-      />
+      {/* Audio Element */}
+      {isPlaying && activeTrack?.audioSrc && (
+        <audio
+          autoPlay
+          src={activeTrack.audioSrc}
+          onEnded={stopTrack}
+          style={{ display: 'none' }}
+        />
+      )}
     </>
   );
 }
