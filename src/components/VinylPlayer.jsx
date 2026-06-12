@@ -40,8 +40,6 @@ export default function VinylPlayer() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const audioRef = useRef(null);
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -84,6 +82,14 @@ export default function VinylPlayer() {
     setActiveTrack(pickedTrack);
     setIsPlaying(Boolean(pickedTrack.audioSrc));
     setIsDrawerOpen(false);
+  };
+
+  // MOBILE FIX: Allows users to just tap a record to play it
+  const handleTap = (track) => {
+    if (!track.audioSrc) return;
+    setActiveTrack(track);
+    setIsPlaying(true);
+    setIsDrawerOpen(false); // Automatically close drawer after selection
   };
 
   return (
@@ -324,11 +330,20 @@ export default function VinylPlayer() {
           {/* Center Section */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', gap: '2rem', overflowX: 'auto', padding: '0.5rem 0' }}>
             {tracks.map(track => (
-              <div key={track.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div 
+                key={track.id} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center',
+                  flexShrink: 0 // MOBILE FIX: Prevents squishing
+                }}
+              >
                 <div
                   draggable={true}
                   onDragStart={(e) => handleDragStart(e, track.id)}
                   onDragEnd={handleDragEnd}
+                  onClick={() => handleTap(track)} // MOBILE FIX: Tap to play
                   className="vinyl-draggable"
                   style={{
                     width: '120px',
@@ -346,7 +361,7 @@ export default function VinylPlayer() {
                       #0d0d0d 50%, #0d0d0d 100%
                     )`,
                     border: '1px solid #333',
-                    cursor: 'grab',
+                    cursor: 'pointer', // Changed to pointer for clickability 
                     position: 'relative'
                   }}
                   data-id={track.id}
@@ -402,7 +417,7 @@ export default function VinylPlayer() {
 
           {/* Right Section */}
           <div style={{ flexShrink: 0, color: '#333', fontSize: '9px', letterSpacing: '0.12em' }}>
-            drag onto turntable to play
+            drag or tap to play
           </div>
         </div>,
         document.body
