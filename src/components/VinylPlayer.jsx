@@ -40,9 +40,6 @@ export default function VinylPlayer() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const [popupMessage, setPopupMessage] = useState(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -258,34 +255,6 @@ export default function VinylPlayer() {
         )}
       </div>
 
-      {/* The Handle / Tab */}
-      <div
-        onClick={toggleDrawer}
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '160px',
-          height: '28px',
-          background: '#111',
-          border: '1.5px solid #c9b96a',
-          borderBottom: 'none',
-          borderRadius: '4px 4px 0 0',
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          color: '#c9b96a',
-          fontSize: '9px',
-          letterSpacing: '0.15em',
-          fontFamily: "'Space Mono', monospace"
-        }}
-      >
-        // CRATE
-      </div>
-
       {/* The Drawer Panel */}
       {mounted && ReactDOM.createPortal(
         <div
@@ -293,7 +262,7 @@ export default function VinylPlayer() {
             position: 'fixed',
             bottom: 0,
             left: 0,
-            width: '100vw', 
+            width: 'calc(100% - 28px)', 
             height: '220px',
             background: '#0d0d0d',
             borderTop: '2px solid #c9b96a',
@@ -309,6 +278,33 @@ export default function VinylPlayer() {
             boxSizing: 'border-box'
           }}
         >
+          {/* THE SIDE-HANDLE */}
+          <div
+            onClick={toggleDrawer}
+            style={{
+              position: 'absolute',
+              top: '28px',
+              right: '-30px', 
+              width: '28px',
+              height: '160px',
+              background: '#111',
+              border: '2px solid #c9b96a',
+              borderLeft: 'none',
+              borderRadius: '0 4px 4px 0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#c9b96a',
+              fontSize: '10px',
+              letterSpacing: '0.15em'
+            }}
+          >
+            <span style={{ transform: 'rotate(-90deg)', whiteSpace: 'nowrap' }}>
+              // CRATE
+            </span>
+          </div>
+
           {/* Left Section */}
           <div style={{ flexShrink: 0 }}>
             <div style={{ color: '#444', fontSize: '10px', letterSpacing: '0.2em', marginBottom: '0.5rem' }}>
