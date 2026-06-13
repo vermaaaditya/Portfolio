@@ -10,7 +10,7 @@ const featuredProjects = [
     name: 'Internly',
     description: 'Full-stack automated internship aggregator scraping LinkedIn, Internshala, and Unstop, with ATS matching and Kanban dashboard.',
     tech: ['React', 'Node.js', 'Supabase', 'Cheerio'],
-    link: 'https://internlyeta.vercel.app'
+    link: 'https://internly-eta.vercel.app'
   },
   {
     id: 'siettpo',
