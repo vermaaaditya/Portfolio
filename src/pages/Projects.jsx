@@ -18,7 +18,7 @@ const allProjects = [
     role: 'Creator & Developer',
     description: 'Full-stack automated internship aggregator scraping LinkedIn, Internshala, and Unstop. Built with a relevance scoring engine (0–10) and blacklist filters, featuring batch upserts to Supabase and a real-time React Kanban dashboard.',
     tech: ['React.js', 'Node.js', 'Supabase', 'Cheerio', 'SHA-256 UUIDs', 'Vercel'],
-    liveLink: 'https://internlyeta.vercel.app',
+    liveLink: 'https://internly-eta.vercel.app',
     githubLink: 'https://github.com/vermaaaditya'
   },
   {
