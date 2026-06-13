@@ -5,8 +5,7 @@ import VinylPlayer from './VinylPlayer';
 export default function AboutDesk() {
   const roles = [
     "Co-Founder & President @ AUTONEX",
-    "Google Student Ambassador 2026",
-    "Training & Placement Coordinator",
+    "Skill and Development Coordinator @ TPO",
     "2nd Year B.Tech CSE (AI/ML) @ SIET"
   ];
 
