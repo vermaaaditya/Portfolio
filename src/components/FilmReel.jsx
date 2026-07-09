@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   motion,
   useScroll,
@@ -108,13 +108,10 @@ export default function FilmReel({ projects }) {
   const prefersReducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
 
-  // Dynamic wrapper height: scales with project count
-  const wrapperHeight = `${100 + projects.length * 60}vh`;
-
-  // Frame sizing constant — must match the CSS width classes
-  // FRAME_STEP is what percentage of the track width one frame occupies
-  // Each frame is ~50vw on desktop with mx-6 gap
-  const FRAME_STEP = 100 / projects.length;
+  // Dynamic wrapper height: scales with project count.
+  // Each project gets ~100vh of scroll distance so the page stays pinned
+  // until every frame has been scrolled through.
+  const wrapperHeight = `${100 + projects.length * 100}vh`;
 
   // Scroll-to-track mapping
   const { scrollYProgress } = useScroll({
@@ -122,18 +119,24 @@ export default function FilmReel({ projects }) {
     offset: ['start start', 'end end'],
   });
 
-  // Map vertical scroll progress to horizontal translateX
-  const trackX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ['0%', `-${(projects.length - 1) * FRAME_STEP}%`]
-  );
+  // Map vertical scroll → horizontal pixel offset.
+  // Each frame = 50vw + 48px gap (mx-6 = 24px each side).
+  // We use a callback so it recalculates on every tick with actual viewport width.
+  const trackX = useTransform(scrollYProgress, (latest) => {
+    if (typeof window === 'undefined') return 0;
+    const vw = window.innerWidth;
+    const frameW = vw * 0.5;       // 50vw per frame
+    const gap = 48;                 // mx-6 = 24px * 2 sides
+    const step = frameW + gap;
+    const maxOffset = (projects.length - 1) * step;
+    return -latest * maxOffset;
+  });
 
   // Apply spring physics for smooth motion (disabled for reduced motion)
   const smoothX = useSpring(trackX, {
-    stiffness: prefersReducedMotion ? 300 : 120,
-    damping: prefersReducedMotion ? 40 : 26,
-    mass: prefersReducedMotion ? 0.1 : 0.5,
+    stiffness: prefersReducedMotion ? 300 : 100,
+    damping: prefersReducedMotion ? 40 : 30,
+    mass: prefersReducedMotion ? 0.1 : 0.8,
   });
 
   // Derive active index from scroll progress — single source of truth
@@ -157,23 +160,38 @@ export default function FilmReel({ projects }) {
         style={{ height: wrapperHeight }}
         id="film-reel-section"
       >
-        {/* Sticky viewport */}
+        {/* Sticky viewport — the page locks here until all frames are scrolled */}
         <div className="sticky top-0 h-screen overflow-hidden bg-[#0a0a0a] flex flex-col justify-center">
+
           {/* Sprocket holes — top */}
           <SprocketStrip position="top" />
 
           {/* Film grain vignette overlay */}
-          <div className="absolute inset-0 pointer-events-none z-[5]"
+          <div
+            className="absolute inset-0 pointer-events-none z-[5]"
             style={{
               background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%)',
             }}
           />
 
+          {/* Section header — inside sticky so it stays locked */}
+          <div className="absolute top-8 left-0 right-0 z-20 text-center pointer-events-none">
+            <p className="font-mono text-[#d4c97a] text-xs uppercase tracking-widest mb-2">
+              CURATED APPLICATIONS
+            </p>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold text-stone-100 tracking-tight">
+              Selected Works
+            </h2>
+          </div>
+
           {/* Horizontal track */}
           <motion.div
             style={{ x: prefersReducedMotion ? trackX : smoothX, willChange: 'transform' }}
-            className="flex flex-row items-center px-[25vw]"
+            className="flex flex-row items-center"
           >
+            {/* Left padding — centers the first frame */}
+            <div className="shrink-0" style={{ width: '25vw' }} />
+
             {projects.map((project, i) => (
               <div key={project.id} className="relative shrink-0 mx-6">
                 {/* Film edge marking */}
@@ -214,7 +232,7 @@ export default function FilmReel({ projects }) {
                     draggable="false"
                   />
 
-                  {/* Subtle frame overlay — film grain on inactive */}
+                  {/* Subtle frame overlay — darken inactive frames */}
                   {i !== active && (
                     <div className="absolute inset-0 bg-black/20 pointer-events-none" />
                   )}
@@ -226,90 +244,95 @@ export default function FilmReel({ projects }) {
                 </span>
               </div>
             ))}
+
+            {/* Right padding — centers the last frame */}
+            <div className="shrink-0" style={{ width: '25vw' }} />
           </motion.div>
 
           {/* Sprocket holes — bottom */}
           <SprocketStrip position="bottom" />
+
+          {/* ─── Details Panel ─── */}
+          {/* INSIDE the sticky container with absolute positioning */}
+          {/* so it stays locked to the viewport while pinned, */}
+          {/* and scrolls away naturally when the section ends. */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90vw] max-w-2xl text-center z-20 pointer-events-none">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.25 }}
+                className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/5 rounded-sm px-6 py-5 pointer-events-auto"
+              >
+                {/* Role tag */}
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/30 block mb-1">
+                  {currentProject.role}
+                </span>
+
+                {/* Title */}
+                <h3 className="font-heading text-lg text-[#d4c97a] mb-1.5">
+                  {currentProject.name}
+                </h3>
+
+                {/* Description */}
+                <p className="text-sm text-stone-400 leading-relaxed mb-2 max-w-lg mx-auto">
+                  {currentProject.description}
+                </p>
+
+                {/* Tech stack */}
+                <p className="text-xs font-mono text-white/30 mb-3">
+                  {currentProject.tech.join(' · ')}
+                </p>
+
+                {/* Links */}
+                <div className="flex gap-5 justify-center items-center">
+                  {currentProject.githubLink && (
+                    <a
+                      href={currentProject.githubLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-500 hover:text-stone-100 transition-colors uppercase tracking-wider"
+                      aria-label={`GitHub repository for ${currentProject.name}`}
+                    >
+                      <GithubIcon className="w-3.5 h-3.5" />
+                      GitHub
+                    </a>
+                  )}
+                  {currentProject.liveLink && (
+                    <a
+                      href={currentProject.liveLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-500 hover:text-[#d4c97a] transition-colors uppercase tracking-wider"
+                      aria-label={`Live demo for ${currentProject.name}`}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Live
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* ─── Scroll progress indicator ─── */}
+          {/* Also INSIDE the sticky container — stays locked, doesn't leak */}
+          <div className="absolute top-1/2 right-6 -translate-y-1/2 z-20 flex flex-col gap-2 pointer-events-none">
+            {projects.map((_, i) => (
+              <motion.div
+                key={i}
+                className="w-1.5 rounded-full"
+                animate={{
+                  height: i === active ? 20 : 8,
+                  backgroundColor: i === active ? '#d4c97a' : 'rgba(255,255,255,0.15)',
+                }}
+                transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3 }}
+              />
+            ))}
+          </div>
         </div>
-
-        {/* Details Panel — fixed, driven by active index */}
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90vw] max-w-2xl text-center z-20 pointer-events-none">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.25 }}
-              className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/5 rounded-sm px-6 py-5 pointer-events-auto"
-            >
-              {/* Role tag */}
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/30 block mb-1">
-                {currentProject.role}
-              </span>
-
-              {/* Title */}
-              <h3 className="font-heading text-lg text-[#d4c97a] mb-1.5">
-                {currentProject.name}
-              </h3>
-
-              {/* Description */}
-              <p className="text-sm text-stone-400 leading-relaxed mb-2 max-w-lg mx-auto">
-                {currentProject.description}
-              </p>
-
-              {/* Tech stack */}
-              <p className="text-xs font-mono text-white/30 mb-3">
-                {currentProject.tech.join(' · ')}
-              </p>
-
-              {/* Links */}
-              <div className="flex gap-5 justify-center items-center">
-                {currentProject.githubLink && (
-                  <a
-                    href={currentProject.githubLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-500 hover:text-stone-100 transition-colors uppercase tracking-wider"
-                    aria-label={`GitHub repository for ${currentProject.name}`}
-                  >
-                    <GithubIcon className="w-3.5 h-3.5" />
-                    GitHub
-                  </a>
-                )}
-                {currentProject.liveLink && (
-                  <a
-                    href={currentProject.liveLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-500 hover:text-[#d4c97a] transition-colors uppercase tracking-wider"
-                    aria-label={`Live demo for ${currentProject.name}`}
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    Live
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Scroll progress indicator */}
-        <motion.div
-          className="fixed top-1/2 right-6 -translate-y-1/2 z-20 flex flex-col gap-2 pointer-events-none"
-        >
-          {projects.map((_, i) => (
-            <motion.div
-              key={i}
-              className="w-1.5 rounded-full"
-              animate={{
-                height: i === active ? 20 : 8,
-                backgroundColor: i === active ? '#d4c97a' : 'rgba(255,255,255,0.15)',
-              }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3 }}
-            />
-          ))}
-        </motion.div>
       </section>
 
       {/* Mobile: Vertical fallback — shown only on small screens */}
