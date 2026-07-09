@@ -108,3 +108,23 @@
   background: rgba(212, 201, 122, 0.6);
 }
 
+/* ─── Film Reel Section ─── */
+
+/* Hide scrollbar during film reel scroll to avoid confusing dual-scroll affordance */
+#film-reel-section {
+  scrollbar-width: none;
+}
+
+/* Film strip subtle gate line between sprockets and track */
+.film-gate-line {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03) 20%, rgba(255, 255, 255, 0.03) 80%, transparent);
+}
+
+/* Reduced motion: disable all spring/scale/filter animations in film reel */
+@media (prefers-reduced-motion: reduce) {
+  #film-reel-section * {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}
+
