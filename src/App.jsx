@@ -10,7 +10,7 @@ function AppContent() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-stone-200 antialiased overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#0a0a0a] text-stone-200 antialiased overflow-x-clip relative">
       {/* Premium film grain texture */}
       <NoiseOverlay />
 

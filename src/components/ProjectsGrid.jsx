@@ -75,7 +75,7 @@ export default function ProjectsGrid() {
       <FilmReel projects={allProjects} />
 
       {/* Action footer link — View All Projects */}
-      <div className="flex flex-col items-center relative z-20 -mt-8 md:mt-0 pb-12">
+      <div className="flex flex-col items-center relative z-20 md:-mt-4 pb-2">
         <Link
           to="/projects"
           className="inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-wider text-[#d4c97a] hover:text-stone-100 bg-[#111111] hover:bg-[#151515] border border-brand-border px-5 py-3 transition-all cursor-pointer shadow-md"
@@ -85,7 +85,7 @@ export default function ProjectsGrid() {
         </Link>
 
         {/* Path Anchor for Circuit Trace */}
-        <div id="path-projects" className="w-3 h-3 bg-brand-bg border-2 border-stone-800 rotate-45 mt-12" />
+        <div id="path-projects" className="w-3 h-3 bg-brand-bg border-2 border-stone-800 rotate-45 mt-6" />
       </div>
     </section>
   );

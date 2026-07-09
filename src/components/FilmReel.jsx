@@ -144,6 +144,10 @@ export default function FilmReel({ projects }) {
     Math.min(projects.length - 1, Math.round(v * (projects.length - 1)))
   );
 
+  // Fade out details panel and progress indicator when entering or exiting the sticky block
+  const detailsOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
+
   useEffect(() => {
     const unsubscribe = activeIndex.on('change', (v) => setActive(v));
     return unsubscribe;
@@ -256,7 +260,14 @@ export default function FilmReel({ projects }) {
           {/* INSIDE the sticky container with absolute positioning */}
           {/* so it stays locked to the viewport while pinned, */}
           {/* and scrolls away naturally when the section ends. */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90vw] max-w-2xl text-center z-20 pointer-events-none">
+          {/* ─── Details Panel ─── */}
+          {/* INSIDE the sticky container with absolute positioning */}
+          {/* so it stays locked to the viewport while pinned, */}
+          {/* and scrolls away naturally when the section ends. */}
+          <motion.div
+            style={{ opacity: detailsOpacity }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90vw] max-w-2xl text-center z-20 pointer-events-none"
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
@@ -315,11 +326,14 @@ export default function FilmReel({ projects }) {
                 </div>
               </motion.div>
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* ─── Scroll progress indicator ─── */}
           {/* Also INSIDE the sticky container — stays locked, doesn't leak */}
-          <div className="absolute top-1/2 right-6 -translate-y-1/2 z-20 flex flex-col gap-2 pointer-events-none">
+          <motion.div
+            style={{ opacity: indicatorOpacity }}
+            className="absolute top-1/2 right-6 -translate-y-1/2 z-20 flex flex-col gap-2 pointer-events-none"
+          >
             {projects.map((_, i) => (
               <motion.div
                 key={i}
@@ -331,7 +345,7 @@ export default function FilmReel({ projects }) {
                 transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3 }}
               />
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 

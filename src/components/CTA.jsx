@@ -39,10 +39,10 @@ export default function CTA() {
   ];
 
   return (
-    <section className="relative w-full py-28 px-6 flex flex-col justify-center items-center text-center select-none z-10">
+    <section className="relative w-full pt-14 pb-24 px-6 flex flex-col justify-center items-center text-center select-none z-10">
       
       {/* Circuit Path End Anchor Point */}
-      <div className="relative mb-8 flex flex-col items-center">
+      <div className="relative mb-4 flex flex-col items-center">
         <div id="path-cta" className="w-3.5 h-3.5 bg-[#d4c97a] border-2 border-brand-bg rotate-45 mb-4 z-20" />
         <div className="w-0.5 h-8 border-l border-dashed border-stone-850" />
       </div>
