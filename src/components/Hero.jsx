@@ -120,6 +120,18 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Lock body scroll while the page is booting/loading
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLoading]);
+
   const handleLoad = () => {
     setIsLoading(false);
   };
@@ -299,12 +311,12 @@ export default function Hero() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="absolute inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono"
+            className="fixed inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono"
           >
             <div className="absolute inset-0 hud-grid opacity-20 pointer-events-none" />
 
             <div className="relative p-7 border border-brand-border project-glass max-w-sm w-full mx-4 flex flex-col items-center">
-              <div className="w-12 h-12 border border-stone-800 border-t-[#d4c97a] rounded-full animate-spin mb-6" />
+              <div className="w-12 h-12 border-3 border-stone-800 border-t-[#d4c97a] rounded-full animate-spin mb-6" />
               <h3 className="text-xs uppercase text-stone-400 tracking-[0.2em] mb-2 font-bold">NEURAL BOOT SEQUENCE</h3>
               <div className="w-full h-1 bg-stone-900 border border-brand-border/40 rounded-full overflow-hidden mb-3">
                 <div
