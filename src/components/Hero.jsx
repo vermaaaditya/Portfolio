@@ -316,7 +316,24 @@ export default function Hero() {
             <div className="absolute inset-0 hud-grid opacity-20 pointer-events-none" />
 
             <div className="relative p-7 border border-brand-border project-glass max-w-sm w-full mx-4 flex flex-col items-center">
-              <div className="w-12 h-12 border-3 border-stone-800 border-t-[#d4c97a] rounded-full animate-spin mb-6" />
+              <div className="relative w-12 h-12 mb-6">
+                <svg className="w-full h-full animate-spin" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="16"
+                    stroke="#1c1917"
+                    strokeWidth="3"
+                    className="opacity-40"
+                  />
+                  <path
+                    d="M18 2 A16 16 0 0 1 34 18"
+                    stroke="#d4c97a"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
               <h3 className="text-xs uppercase text-stone-400 tracking-[0.2em] mb-2 font-bold">NEURAL BOOT SEQUENCE</h3>
               <div className="w-full h-1 bg-stone-900 border border-brand-border/40 rounded-full overflow-hidden mb-3">
                 <div
