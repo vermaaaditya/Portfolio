@@ -321,15 +321,18 @@ export default function Hero() {
                   <circle
                     cx="18"
                     cy="18"
-                    r="16"
+                    r="15"
                     stroke="#1c1917"
-                    strokeWidth="3"
+                    strokeWidth="3.5"
                     className="opacity-40"
                   />
-                  <path
-                    d="M18 2 A16 16 0 0 1 34 18"
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="15"
                     stroke="#d4c97a"
                     strokeWidth="3.5"
+                    strokeDasharray="23.5 70.7"
                     strokeLinecap="round"
                   />
                 </svg>
