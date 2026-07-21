@@ -47,7 +47,8 @@ export default function CircuitTrace() {
         const p2 = coords[i + 1];
         const dy = p2.y - p1.y;
 
-        const offsetMag = Math.min(window.innerWidth * 0.08, 90);
+        // Dynamically scale curve offset based on vertical distance dy to ensure smooth flow
+        const offsetMag = Math.min(Math.abs(dy) * 0.25, window.innerWidth * 0.08, 75);
         const offset = (i % 2 === 0 ? 1 : -1) * offsetMag;
 
         const cp1x = p1.x + offset;

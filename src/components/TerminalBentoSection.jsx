@@ -69,12 +69,12 @@ export default function TerminalBentoSection() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Left 6 Columns: Interactive Embedded macOS Terminal Window */}
-        <div className="lg:col-span-6 flex flex-col">
-          <TiltCard maxTilt={4} scale={1.01} className="h-full">
-            <div className="bg-[#0e0e0e] border border-[#2a2a2a] hover:border-[#d4c97a]/40 rounded-[8px] overflow-hidden flex flex-col h-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-colors">
+        <div className="lg:col-span-6 flex flex-col h-full">
+          <TiltCard maxTilt={4} scale={1.01} className="h-full flex flex-col">
+            <div className="bg-[#0e0e0e] border border-[#2a2a2a] hover:border-[#d4c97a]/40 rounded-[8px] overflow-hidden flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-colors">
               
               {/* Window Header Bar */}
-              <div className="bg-[#161616] border-b border-[#222] px-4 py-3 flex items-center justify-between">
+              <div className="bg-[#161616] border-b border-[#222] px-4 py-3 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
@@ -94,7 +94,7 @@ export default function TerminalBentoSection() {
               {/* Terminal Log Output Area */}
               <div 
                 ref={terminalLogsRef} 
-                className="p-5 flex-1 max-h-[360px] overflow-y-auto space-y-4 text-xs terminal-scrollbar bg-[#080808]"
+                className="p-5 flex-1 min-h-[300px] overflow-y-auto space-y-4 text-xs terminal-scrollbar bg-[#080808]"
               >
                 {celebration && (
                   <div className="bg-[#d4c97a] text-[#0a0a0a] p-2 text-center font-bold text-xs rounded animate-bounce">
@@ -117,7 +117,7 @@ export default function TerminalBentoSection() {
               </div>
 
               {/* Terminal Active Prompt Input Line */}
-              <div className="px-4 py-3 bg-[#121212] border-t border-[#222] flex items-center gap-2 text-xs">
+              <div className="px-4 py-3.5 bg-[#121212] border-t border-[#222] flex items-center gap-2 text-xs shrink-0">
                 <span className="text-[#d4c97a] font-bold">&gt;</span>
                 <input
                   type="text"
@@ -133,11 +133,11 @@ export default function TerminalBentoSection() {
         </div>
 
         {/* Right 6 Columns: Editorial Narrative & Stats Bento Grid */}
-        <div className="lg:col-span-6 flex flex-col gap-6 justify-between">
+        <div className="lg:col-span-6 flex flex-col gap-6 justify-between h-full">
           
           {/* Top Editorial Narrative Card */}
-          <TiltCard maxTilt={4} scale={1.01}>
-            <div className="project-glass bg-[#0e0e0e]/90 border border-white/10 hover:border-[#d4c97a]/40 p-6 md:p-8 rounded-[8px] shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all">
+          <TiltCard maxTilt={4} scale={1.01} className="flex-1">
+            <div className="project-glass bg-[#0e0e0e]/90 border border-white/10 hover:border-[#d4c97a]/40 p-6 md:p-8 rounded-[8px] shadow-[0_10px_30px_rgba(0,0,0,0.6)] transition-all h-full flex flex-col justify-center">
               <h2 className="text-2xl md:text-3xl font-heading font-bold text-stone-100 tracking-tight mb-3 leading-tight">
                 Building systems, <br />
                 <span className="italic text-[#d4c97a] font-light">one line at a time</span>
@@ -152,10 +152,10 @@ export default function TerminalBentoSection() {
           </TiltCard>
 
           {/* Bottom Row: Stats Card & Download Resume CTA Card */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             
             {/* Stats Summary Card */}
-            <TiltCard maxTilt={6} scale={1.02}>
+            <TiltCard maxTilt={6} scale={1.02} className="h-full">
               <div className="bg-[#0e0e0e] border border-[#2a2a2a] hover:border-[#d4c97a]/40 p-6 rounded-[8px] flex flex-col justify-between h-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all">
                 <div className="space-y-3">
                   <div>
@@ -175,7 +175,7 @@ export default function TerminalBentoSection() {
             </TiltCard>
 
             {/* Interactive Download Resume Card */}
-            <TiltCard maxTilt={6} scale={1.02}>
+            <TiltCard maxTilt={6} scale={1.02} className="h-full">
               <a
                 href="/assets/AadityaCV.pdf"
                 download
