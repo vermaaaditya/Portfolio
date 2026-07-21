@@ -45,18 +45,31 @@ export default function Hero() {
     ];
 
     const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 5) + 2;
-      if (progress >= 99) {
-        progress = 99;
+      progress += Math.floor(Math.random() * 8) + 4;
+      if (progress >= 100) {
+        progress = 100;
         clearInterval(interval);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 300);
       }
       setBootProgress(progress);
 
       const msg = [...statusMsgs].reverse().find(m => progress >= m.threshold);
       if (msg) setBootStatus(msg.text);
-    }, 80);
+    }, 60);
 
-    return () => clearInterval(interval);
+    // Guaranteed safety timeout (2.2s max) to prevent loading screen from ever hanging
+    const safetyTimeout = setTimeout(() => {
+      setBootProgress(100);
+      setBootStatus("Render initialized.");
+      setIsLoading(false);
+    }, 2200);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(safetyTimeout);
+    };
   }, [isLoading]);
 
   useEffect(() => {
@@ -310,45 +323,37 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="fixed inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono"
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="fixed inset-0 bg-[#0a0a0a] z-50 flex flex-col items-center justify-center font-mono select-none"
           >
             <div className="absolute inset-0 hud-grid opacity-20 pointer-events-none" />
 
-            <div className="relative p-7 border border-brand-border project-glass max-w-sm w-full mx-4 flex flex-col items-center">
-              <div className="relative w-12 h-12 mb-6">
-                <svg className="w-full h-full animate-spin" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="15"
-                    stroke="#1c1917"
-                    strokeWidth="3.5"
-                    className="opacity-40"
-                  />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="15"
-                    stroke="#d4c97a"
-                    strokeWidth="3.5"
-                    strokeDasharray="23.5 70.7"
-                    strokeLinecap="round"
-                  />
-                </svg>
+            <div className="relative p-8 border border-[#d4c97a]/40 bg-[#0e0e0e]/90 backdrop-blur-xl rounded-[6px] max-w-sm w-full mx-4 flex flex-col items-center shadow-[0_0_50px_rgba(212,201,122,0.12)]">
+              {/* Pulsing Core Node */}
+              <div className="relative w-14 h-14 mb-6 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full border-2 border-[#d4c97a]/30 animate-ping" />
+                <div className="w-10 h-10 rounded-full bg-[#161616] border border-[#d4c97a] flex items-center justify-center text-[#d4c97a] shadow-[0_0_15px_#d4c97a]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#d4c97a] animate-pulse" />
+                </div>
               </div>
-              <h3 className="text-xs uppercase text-stone-400 tracking-[0.2em] mb-2 font-bold">NEURAL BOOT SEQUENCE</h3>
-              <div className="w-full h-1 bg-stone-900 border border-brand-border/40 rounded-full overflow-hidden mb-3">
+
+              <h3 className="text-xs uppercase text-stone-300 tracking-[0.25em] mb-3 font-bold">SYSTEM BOOT SEQUENCE</h3>
+              
+              {/* Progress Bar Container */}
+              <div className="w-full h-1.5 bg-[#161616] border border-[#2a2a2a] rounded-full overflow-hidden mb-3">
                 <div
-                  className="h-full bg-[#d4c97a] transition-all duration-150 ease-out"
+                  className="h-full bg-[#d4c97a] shadow-[0_0_10px_#d4c97a] transition-all duration-150 ease-out"
                   style={{ width: `${bootProgress}%` }}
                 />
               </div>
-              <div className="flex justify-between w-full text-[9px] text-stone-500 mb-1.5">
-                <span>STATUS_CODE:</span>
-                <span className="text-stone-300 font-bold">{bootProgress}%</span>
+
+              {/* Status Percentage Line */}
+              <div className="flex justify-between w-full text-[10px] text-stone-500 mb-2">
+                <span>COMPILING_KERNEL:</span>
+                <span className="text-[#d4c97a] font-bold">{bootProgress}%</span>
               </div>
-              <div className="text-[8px] text-[#d4c97a] h-4 uppercase tracking-wider text-center font-bold">
+
+              <div className="text-[9px] text-stone-400 h-4 uppercase tracking-wider text-center font-semibold border-t border-white/5 pt-2 w-full truncate">
                 &gt; {bootStatus}
               </div>
             </div>
