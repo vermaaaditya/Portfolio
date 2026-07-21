@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Terminal, GitBranch, Star, GitFork, ExternalLink, Activity } from 'lucide-react';
+import { ExternalLink, Activity } from 'lucide-react';
 import TiltCard from './TiltCard';
 
 const GithubIcon = ({ className }) => (
@@ -12,27 +11,17 @@ const GithubIcon = ({ className }) => (
 
 export default function GithubActivityWidget() {
   const [profile, setProfile] = useState(null);
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchGithubData() {
       try {
-        const [profileRes, reposRes] = await Promise.all([
-          fetch('https://api.github.com/users/vermaaaditya'),
-          fetch('https://api.github.com/users/vermaaaditya/repos?sort=updated&per_page=6')
-        ]);
-
-        if (profileRes.ok && reposRes.ok) {
+        const profileRes = await fetch('https://api.github.com/users/vermaaaditya');
+        if (profileRes.ok) {
           const profileData = await profileRes.json();
-          const reposData = await reposRes.json();
           setProfile(profileData);
-          setRepos(reposData);
         }
       } catch (err) {
         console.warn('GitHub API fetch fallback:', err);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -78,16 +67,16 @@ export default function GithubActivityWidget() {
           </div>
 
           {/* GitHub Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-[#121212] border border-white/5 p-4 rounded text-center">
               <div className="text-xl md:text-2xl font-bold text-stone-100 mb-0.5">
-                {profile ? profile.public_repos : '12+'}
+                {profile ? profile.public_repos : '15'}
               </div>
               <div className="text-[10px] text-stone-500 uppercase tracking-wider">Public Repos</div>
             </div>
             <div className="bg-[#121212] border border-white/5 p-4 rounded text-center">
               <div className="text-xl md:text-2xl font-bold text-[#d4c97a] mb-0.5">
-                {profile ? profile.followers : '15+'}
+                {profile ? profile.followers : '2'}
               </div>
               <div className="text-[10px] text-stone-500 uppercase tracking-wider">Followers</div>
             </div>
@@ -107,7 +96,7 @@ export default function GithubActivityWidget() {
           </div>
 
           {/* Contribution Heatmap Matrix Grid */}
-          <div className="mb-8 bg-[#111111] border border-white/5 p-4 rounded">
+          <div className="bg-[#111111] border border-white/5 p-4 rounded">
             <div className="flex justify-between items-center mb-3 text-[10px] text-stone-400 uppercase tracking-widest">
               <span>COMMIT CONTRIBUTION MATRIX</span>
               <span className="text-[#d4c97a]">LAST 52 WEEKS</span>
@@ -132,57 +121,6 @@ export default function GithubActivityWidget() {
             </div>
           </div>
 
-          {/* Top Repositories Grid */}
-          <div>
-            <div className="text-xs text-stone-400 font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-              <GitBranch className="w-4 h-4 text-[#d4c97a]" />
-              RECENT REPOSITORIES & SHIPPED CODE
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {repos.length > 0 ? (
-                repos.map((repo) => (
-                  <a
-                    key={repo.id}
-                    href={repo.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#121212] border border-white/5 hover:border-[#d4c97a]/40 p-4 rounded transition-all duration-200 group flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="font-heading font-bold text-sm text-stone-200 group-hover:text-[#d4c97a] transition-colors truncate">
-                          {repo.name}
-                        </span>
-                        <ExternalLink className="w-3.5 h-3.5 text-stone-600 group-hover:text-[#d4c97a] shrink-0" />
-                      </div>
-                      <p className="font-sans text-[11px] text-stone-400 line-clamp-2 mb-3">
-                        {repo.description || 'JavaScript / Web Application project repo.'}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-[10px] text-stone-500 pt-2 border-t border-white/5">
-                      {repo.language && (
-                        <span className="text-[#d4c97a] font-bold">{repo.language}</span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-amber-400" />
-                        {repo.stargazers_count}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <GitFork className="w-3 h-3" />
-                        {repo.forks_count}
-                      </span>
-                    </div>
-                  </a>
-                ))
-              ) : (
-                <div className="col-span-2 p-6 text-center text-stone-500 text-xs uppercase tracking-wider">
-                  Loading live GitHub repositories from @vermaaaditya...
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </TiltCard>
     </section>

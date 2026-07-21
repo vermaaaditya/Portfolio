@@ -45,18 +45,23 @@ export default function CircuitTrace() {
       for (let i = 0; i < coords.length - 1; i++) {
         const p1 = coords[i];
         const p2 = coords[i + 1];
+        const dx = Math.abs(p2.x - p1.x);
         const dy = p2.y - p1.y;
 
-        // Dynamically scale curve offset based on vertical distance dy to ensure smooth flow
-        const offsetMag = Math.min(Math.abs(dy) * 0.25, window.innerWidth * 0.08, 75);
-        const offset = (i % 2 === 0 ? 1 : -1) * offsetMag;
+        // If anchors are vertically aligned (dx < 25) or close vertically (dy < 120), connect directly with a straight line
+        if (dx < 25 || Math.abs(dy) < 120) {
+          d += ` L ${p2.x} ${p2.y}`;
+        } else {
+          const offsetMag = Math.min(Math.abs(dy) * 0.2, window.innerWidth * 0.08, 60);
+          const offset = (i % 2 === 0 ? 1 : -1) * offsetMag;
 
-        const cp1x = p1.x + offset;
-        const cp1y = p1.y + dy * 0.4;
-        const cp2x = p2.x - offset;
-        const cp2y = p1.y + dy * 0.6;
+          const cp1x = p1.x + offset;
+          const cp1y = p1.y + dy * 0.4;
+          const cp2x = p2.x - offset;
+          const cp2y = p1.y + dy * 0.6;
 
-        d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+          d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+        }
       }
 
       setPathData(d);
