@@ -64,7 +64,7 @@ export default function TerminalBentoSection() {
     <section className="relative w-full max-w-5xl mx-auto my-20 px-6 select-none font-mono z-10">
       
       {/* Anchor Point for Circuit Trace */}
-      <div id="path-about" className="w-3 h-3 bg-[#d4c97a] rotate-45 border border-[#0a0a0a] absolute -top-10 left-1/2 -translate-x-1/2 z-20 shadow-[0_0_10px_#d4c97a]" />
+      <div id="path-bento" className="w-3 h-3 bg-[#d4c97a] rotate-45 border border-[#0a0a0a] absolute -top-10 left-1/2 -translate-x-1/2 z-20 shadow-[0_0_10px_#d4c97a]" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         

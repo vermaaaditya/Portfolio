@@ -17,6 +17,7 @@ export default function CircuitTrace() {
         'path-hero-start',
         'path-skills',
         'path-about',
+        'path-bento',
         'path-projects',
         'path-cta'
       ];

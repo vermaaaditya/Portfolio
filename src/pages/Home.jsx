@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import HighwaySkills from '../components/HighwaySkills';
+import AboutDesk from '../components/AboutDesk';
 import TerminalBentoSection from '../components/TerminalBentoSection';
 import MetricsBar from '../components/MetricsBar';
 import ProjectsGrid from '../components/ProjectsGrid';
@@ -16,19 +17,22 @@ export default function Home() {
       {/* 2. Highway Skills Marquee */}
       <HighwaySkills />
 
-      {/* 3. Embedded Terminal & Editorial Bento Grid Section */}
+      {/* 3. From the Desk (Portrait & Vinyl Music Player) */}
+      <AboutDesk />
+
+      {/* 4. Embedded Terminal & Editorial Bento Grid Section */}
       <TerminalBentoSection />
 
-      {/* 4. HUD System Metrics & Achievements Bar */}
+      {/* 5. HUD System Metrics & Achievements Bar */}
       <MetricsBar />
 
-      {/* 5. Projects Grid & Film Reel */}
+      {/* 6. Projects Grid & Film Reel */}
       <ProjectsGrid />
 
-      {/* 6. GitHub Activity & Repository Stream HUD */}
+      {/* 7. GitHub Activity & Repository Stream HUD */}
       <GithubActivityWidget />
 
-      {/* 7. CTA Section */}
+      {/* 8. CTA Section */}
       <CTA />
     </div>
   );
