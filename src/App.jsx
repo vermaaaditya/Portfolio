@@ -7,11 +7,14 @@ import CircuitTrace from './components/CircuitTrace';
 import Navbar from './components/Navbar';
 import CommandPalette from './components/CommandPalette';
 import ParallaxBackground from './components/ParallaxBackground';
+import CyberTerminalModal from './components/CyberTerminalModal';
+import { Terminal } from 'lucide-react';
 
 function AppContent() {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -37,6 +40,22 @@ function AppContent() {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
       />
+
+      {/* Interactive Mini Cyber Terminal Shell Modal */}
+      <CyberTerminalModal
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+      />
+
+      {/* Floating Bottom-Right Cyber CLI Shell Launcher Button */}
+      <button
+        onClick={() => setIsTerminalOpen(true)}
+        className="fixed bottom-6 right-6 z-30 bg-[#0e0e0e] hover:bg-[#141414] text-[#d4c97a] border border-[#d4c97a]/50 p-3 rounded-full shadow-[0_0_20px_rgba(212,201,122,0.2)] hover:shadow-[0_0_30px_rgba(212,201,122,0.4)] transition-all cursor-pointer group flex items-center gap-2"
+        title="Open Interactive Cyber Terminal Shell (CLI)"
+      >
+        <Terminal className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+        <span className="hidden md:inline font-mono text-[10px] font-bold uppercase tracking-wider pr-1">CLI</span>
+      </button>
 
       {/* Premium film grain texture */}
       <NoiseOverlay />

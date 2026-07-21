@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Terminal, Filter, X, Cpu, Layers } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Terminal, Filter, X, Cpu, Layers, Code2, Copy, Check } from 'lucide-react';
 import TiltCard from '../components/TiltCard';
 
 const GithubIcon = ({ className }) => (
@@ -10,6 +10,85 @@ const GithubIcon = ({ className }) => (
     <path d="M9 18c-4.51 2-5-2-7-2" />
   </svg>
 );
+
+const projectSnippets = {
+  internly: `// Cheerio Scraping & SHA-256 Relevance Scoring Engine (Internly)
+const cheerio = require('cheerio');
+const crypto = require('crypto');
+
+export async function processListing(rawHtml, userPreferences) {
+  const $ = cheerio.load(rawHtml);
+  const title = $('.job-title').text().trim();
+  const company = $('.company-name').text().trim();
+  
+  // Deduplication via SHA-256 Hash
+  const hashId = crypto.createHash('sha256').update(\`\${title}-\${company}\`).digest('hex');
+
+  // Relevance Scoring Engine (0 - 10)
+  let score = 5;
+  if (userPreferences.skills.some(skill => title.toLowerCase().includes(skill))) score += 3;
+  if (userPreferences.blacklist.some(b => company.toLowerCase().includes(b))) score = 0;
+
+  return { hashId, title, company, score: Math.min(score, 10) };
+}`,
+
+  krishivision: `# PyTorch MobileNetV2 Leaf Disease Inference Engine (KrishiVision API)
+import torch
+import torchvision.transforms as transforms
+from PIL import Image
+import io
+
+model = torch.load('krishivision_mobilenet_v2.pth', map_location='cpu')
+model.eval()
+
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+def predict_crop_disease(image_bytes):
+    img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+    tensor = transform(img).unsqueeze(0)
+    with torch.no_grad():
+        outputs = model(tensor)
+        confidence, predicted = torch.max(outputs, 1)
+    return {"class_id": int(predicted.item()), "confidence": float(confidence.item())}`,
+
+  siettpo: `// Production Build & Vendor Chunk Optimization (SIET TPO Portal)
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    target: 'es2022',
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'framer-motion'],
+          icons: ['lucide-react']
+        }
+      }
+    }
+  }
+});`,
+
+  northjobs: `// Supabase Government Gazette Scraper Batch Upsert (NorthJobs)
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+export async function upsertNotices(notices) {
+  const { data, error } = await supabase
+    .from('recruitment_notices')
+    .upsert(notices, { onConflict: 'hash_id', ignoreDuplicates: true });
+  
+  if (error) console.error('[err] Batch upsert failed:', error);
+  return data;
+}`
+};
 
 const allProjects = [
   {
@@ -85,10 +164,24 @@ const categories = ['ALL', 'Full-Stack & Scraping', 'AI & ML', 'Production Web']
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [modalTab, setModalTab] = useState('overview'); // 'overview' | 'code'
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleOpenModal = (project) => {
+    setSelectedProject(project);
+    setModalTab('overview');
+    setCopiedSnippet(false);
+  };
+
+  const handleCopySnippet = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedSnippet(true);
+    setTimeout(() => setCopiedSnippet(false), 1500);
+  };
 
   const filteredProjects = activeCategory === 'ALL'
     ? allProjects
@@ -167,7 +260,7 @@ export default function Projects() {
               >
                 <TiltCard maxTilt={8} scale={1.02}>
                   <div
-                    onClick={() => setSelectedProject(project)}
+                    onClick={() => handleOpenModal(project)}
                     className="project-glass p-6 md:p-8 flex flex-col justify-between rounded-[4px] border border-white/5 hover:border-[#d4c97a]/40 hover:shadow-[0_0_25px_rgba(212,201,122,0.08)] transition-all duration-300 relative group cursor-pointer h-full"
                   >
                     <div>
@@ -175,8 +268,9 @@ export default function Projects() {
                         <span className="font-mono text-[9px] text-[#d4c97a] bg-[#d4c97a]/10 border border-[#d4c97a]/30 px-2 py-0.5 rounded uppercase tracking-widest">
                           {project.category}
                         </span>
-                        <span className="font-mono text-[10px] text-stone-600 uppercase tracking-widest group-hover:text-stone-300 transition-colors">
-                          SPEC &rarr;
+                        <span className="font-mono text-[10px] text-stone-600 uppercase tracking-widest group-hover:text-stone-300 transition-colors flex items-center gap-1">
+                          <Code2 className="w-3 h-3 text-[#d4c97a]" />
+                          SPEC & CODE &rarr;
                         </span>
                       </div>
 
@@ -246,7 +340,7 @@ export default function Projects() {
         </motion.div>
       </div>
 
-      {/* Deep-Dive Project Detail Drawer Modal */}
+      {/* Deep-Dive Project Detail Drawer Modal + Live Architecture Code Snippet Viewer */}
       <AnimatePresence>
         {selectedProject && (
           <div 
@@ -263,11 +357,26 @@ export default function Projects() {
             >
               {/* Header */}
               <div className="bg-[#141414] border-b border-[#222] px-6 py-4 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <Cpu className="w-4 h-4 text-[#d4c97a]" />
-                  <span className="text-xs font-bold text-[#d4c97a] uppercase tracking-wider">
-                    TECHNICAL ARCHITECTURE SPEC
-                  </span>
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1.5 border border-[#333] rounded px-2 py-1 bg-[#0a0a0a]">
+                    <button
+                      onClick={() => setModalTab('overview')}
+                      className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded transition-colors ${
+                        modalTab === 'overview' ? 'bg-[#d4c97a] text-[#0a0a0a]' : 'text-stone-400 hover:text-stone-100'
+                      }`}
+                    >
+                      OVERVIEW
+                    </button>
+                    <button
+                      onClick={() => setModalTab('code')}
+                      className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${
+                        modalTab === 'code' ? 'bg-[#d4c97a] text-[#0a0a0a]' : 'text-stone-400 hover:text-stone-100'
+                      }`}
+                    >
+                      <Code2 className="w-3.5 h-3.5" />
+                      CODE SNIPPET
+                    </button>
+                  </div>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
@@ -277,58 +386,90 @@ export default function Projects() {
                 </button>
               </div>
 
-              {/* Body */}
+              {/* Body Content */}
               <div className="p-6 md:p-8 space-y-6 max-h-[75vh] overflow-y-auto terminal-scrollbar">
-                <div>
-                  <span className="text-[10px] text-stone-500 uppercase tracking-widest block mb-1">
-                    {selectedProject.role}
-                  </span>
-                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-stone-100">
-                    {selectedProject.name}
-                  </h2>
-                </div>
+                {modalTab === 'overview' ? (
+                  <>
+                    <div>
+                      <span className="text-[10px] text-stone-500 uppercase tracking-widest block mb-1">
+                        {selectedProject.role}
+                      </span>
+                      <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-stone-100">
+                        {selectedProject.name}
+                      </h2>
+                    </div>
 
-                <div>
-                  <h4 className="text-xs text-[#d4c97a] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <Layers className="w-3.5 h-3.5" />
-                    PROJECT OVERVIEW
-                  </h4>
-                  <p className="font-sans text-xs md:text-sm text-stone-300 leading-relaxed text-justify">
-                    {selectedProject.description}
-                  </p>
-                </div>
+                    <div>
+                      <h4 className="text-xs text-[#d4c97a] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <Layers className="w-3.5 h-3.5" />
+                        PROJECT OVERVIEW
+                      </h4>
+                      <p className="font-sans text-xs md:text-sm text-stone-300 leading-relaxed text-justify">
+                        {selectedProject.description}
+                      </p>
+                    </div>
 
-                {selectedProject.highlights && (
+                    {selectedProject.highlights && (
+                      <div>
+                        <h4 className="text-xs text-[#d4c97a] font-bold uppercase tracking-wider mb-2">
+                          KEY ARCHITECTURAL HIGHLIGHTS
+                        </h4>
+                        <ul className="space-y-2">
+                          {selectedProject.highlights.map((h, i) => (
+                            <li key={i} className="text-xs text-stone-300 flex items-start gap-2.5 font-sans">
+                              <span className="text-[#d4c97a] font-mono mt-0.5">&gt;</span>
+                              <span>{h}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div>
+                      <h4 className="text-xs text-stone-400 font-bold uppercase tracking-wider mb-2">
+                        STATION & TECH STACK
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProject.tech.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-xs text-stone-300 bg-white/5 border border-white/10 px-3 py-1 rounded-[2px]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
                   <div>
-                    <h4 className="text-xs text-[#d4c97a] font-bold uppercase tracking-wider mb-2">
-                      KEY ARCHITECTURAL HIGHLIGHTS
-                    </h4>
-                    <ul className="space-y-2">
-                      {selectedProject.highlights.map((h, i) => (
-                        <li key={i} className="text-xs text-stone-300 flex items-start gap-2.5 font-sans">
-                          <span className="text-[#d4c97a] font-mono mt-0.5">&gt;</span>
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="text-xs text-[#d4c97a] font-bold uppercase tracking-wider flex items-center gap-2">
+                        <Code2 className="w-4 h-4" />
+                        ARCHITECTURE CODE PIPELINE ({selectedProject.name})
+                      </h4>
+                      {projectSnippets[selectedProject.id] && (
+                        <button
+                          onClick={() => handleCopySnippet(projectSnippets[selectedProject.id])}
+                          className="bg-[#181818] hover:bg-[#222] text-[#d4c97a] border border-[#d4c97a]/40 px-3 py-1 rounded text-xs uppercase flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          {copiedSnippet ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{copiedSnippet ? 'COPIED!' : 'COPY CODE'}</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {projectSnippets[selectedProject.id] ? (
+                      <div className="bg-[#050505] border border-[#222] rounded-[4px] p-4 font-mono text-[11px] leading-relaxed text-stone-300 overflow-x-auto terminal-scrollbar">
+                        <pre className="whitespace-pre">{projectSnippets[selectedProject.id]}</pre>
+                      </div>
+                    ) : (
+                      <div className="p-8 text-center text-stone-500 text-xs uppercase tracking-wider">
+                        Source snippet proprietary or NDA protected for institutional release.
+                      </div>
+                    )}
                   </div>
                 )}
-
-                <div>
-                  <h4 className="text-xs text-stone-400 font-bold uppercase tracking-wider mb-2">
-                    STATION & TECH STACK
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.tech.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs text-stone-300 bg-white/5 border border-white/10 px-3 py-1 rounded-[2px]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Footer Action Links */}
                 <div className="pt-4 border-t border-[#222] flex flex-wrap gap-4 items-center">

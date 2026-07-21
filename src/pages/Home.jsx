@@ -4,6 +4,7 @@ import HighwaySkills from '../components/HighwaySkills';
 import AboutDesk from '../components/AboutDesk';
 import MetricsBar from '../components/MetricsBar';
 import ProjectsGrid from '../components/ProjectsGrid';
+import GithubActivityWidget from '../components/GithubActivityWidget';
 import CTA from '../components/CTA';
 
 export default function Home() {
@@ -24,7 +25,10 @@ export default function Home() {
       {/* 5. Projects Grid & Film Reel */}
       <ProjectsGrid />
 
-      {/* 6. CTA Section */}
+      {/* 6. GitHub Activity & Repository Stream HUD */}
+      <GithubActivityWidget />
+
+      {/* 7. CTA Section */}
       <CTA />
     </div>
   );
